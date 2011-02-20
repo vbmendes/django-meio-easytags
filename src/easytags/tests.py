@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from easytags.parser import get_args_kwargs_from_token_parse
 
-class EasyTagsTests(TestCase):
+class ParserTests(TestCase):
 
     def test_environment(self):
         """
@@ -42,5 +42,13 @@ class EasyTagsTests(TestCase):
         token = template.Token(template.TOKEN_BLOCK, 'tag_name "arg1" kwarg1="1"')
         self.assertEquals(
             {'args': ('"arg1"',), 'kwargs': {'kwarg1': '"1"'}},
+            get_args_kwargs_from_token_parse(parser, token)
+        )
+
+    def test_parse_tag_with_variable_arg(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name argvariable')
+        self.assertEquals(
+            {'args': ('argvariable',), 'kwargs': {}},
             get_args_kwargs_from_token_parse(parser, token)
         )
