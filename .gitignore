@@ -1,6 +1,10 @@
-bin
-parts
-eggs
-develop-eggs
-*.egg-info
+*.pyc
+*.pyo
 .installed.cfg
+bin
+develop-eggs
+dist
+downloads
+eggs
+parts
+src/*.egg-info
