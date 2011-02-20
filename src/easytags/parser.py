@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+'''
+Created on 20/02/2011
+
+@author: vbmendes
+'''
 
 
 def get_args_kwargs_from_token_parse(parser, token):
