@@ -6,6 +6,7 @@ Created on 20/02/2011
 @author: vbmendes
 '''
 
+from django import template
 from django.template import Context, Variable
 from django.test import TestCase
 
@@ -13,7 +14,7 @@ from easytags.node import EasyNode
 
 class MyEasyNode(EasyNode):
 
-    def render_context(self, arg1):
+    def render_context(self, arg1, kwarg1=None):
         return arg1
 
 class NodeTests(TestCase):
@@ -83,3 +84,42 @@ class NodeTests(TestCase):
             u'value',
             node.render(context),
         )
+
+    def test_node_parse_returns_node_instance(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1 kwarg1="a=1"')
+        node = MyEasyNode.parse(parser, token)
+        
+        self.assertTrue(isinstance(node, MyEasyNode))
+        self.assertEquals(u'arg1', node.args[0].var)
+        self.assertEquals(u'"a=1"', node.kwargs['kwarg1'].var)
+    
+    def test_node_parse_verifies_invalid_kwarg(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1 invalid_kwarg="a=1"')
+
+        self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
+    
+    def test_node_parse_verifies_kwarg_already_satisfied_by_arg(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1 arg1="a=1"')
+
+        self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
+    
+    def test_node_parse_verifies_if_there_are_more_args_kwargs_then_method_requires(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1 arg2 arg3')
+
+        self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
+
+    def test_node_parse_verifies_if_there_are_less_args_kwargs_then_method_requires(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name')
+
+        self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
+
+    def test_node_parse_verifies_if_required_arg_is_specified(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name kwarg1="a"')
+
+        self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
