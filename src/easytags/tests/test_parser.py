@@ -92,3 +92,11 @@ class ParserTests(TestCase):
             {'args': (), 'kwargs': {'kwarg1': u'"será?"'}},
             get_args_kwargs_from_token_parse(parser, token)
         )
+
+    def test_parse_tag_with_args_after_kwargs_raises_exception(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, u'tag_name kwarg1="será?" my_arg')
+        self.assertRaises(template.TemplateSyntaxError,
+            get_args_kwargs_from_token_parse, parser, token
+        )
+
