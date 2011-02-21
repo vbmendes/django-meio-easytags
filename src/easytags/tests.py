@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 
 from django import template
 from django.test import TestCase
 
 from easytags.parser import get_args_kwargs_from_token_parse
+
 
 class ParserTests(TestCase):
 
@@ -50,5 +52,37 @@ class ParserTests(TestCase):
         token = template.Token(template.TOKEN_BLOCK, 'tag_name argvariable')
         self.assertEquals(
             {'args': ('argvariable',), 'kwargs': {}},
+            get_args_kwargs_from_token_parse(parser, token)
+        )
+    
+    def test_parse_tag_with_equals_in_arg_value(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name "a=1"')
+        self.assertEquals(
+            {'args': ('"a=1"',), 'kwargs': {}},
+            get_args_kwargs_from_token_parse(parser, token)
+        )
+    
+    def test_parse_tag_with_equals_in_kwarg_value(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name kwarg1="a=1"')
+        self.assertEquals(
+            {'args': (), 'kwargs': {'kwarg1': '"a=1"'}},
+            get_args_kwargs_from_token_parse(parser, token)
+        )
+
+    def test_parse_tag_special_symbol_in_arg_value(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, u'tag_name "será?"')
+        self.assertEquals(
+            {'args': (u'"será?"',), 'kwargs': {}},
+            get_args_kwargs_from_token_parse(parser, token)
+        )
+
+    def test_parse_tag_special_symbol_in_kwarg_value(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, u'tag_name kwarg1="será?"')
+        self.assertEquals(
+            {'args': (), 'kwargs': {'kwarg1': u'"será?"'}},
             get_args_kwargs_from_token_parse(parser, token)
         )
