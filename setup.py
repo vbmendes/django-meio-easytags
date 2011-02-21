@@ -5,7 +5,7 @@ setup(
     version = "0.1",
     url = "http://github.com/vbmendes/django-meio-easytags",
     license = "BSD",
-    description = "An easier way to write template tags for Django's template system.",
+    description = "An easy way to create custom template tags for Django's templating system.",
     author = "Vinicius Mendes",
     packages = find_packages('src'),
     package_dir = {'': 'src'},
