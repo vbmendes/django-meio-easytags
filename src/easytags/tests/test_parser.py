@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+'''
+Created on 20/02/2011
+
+@author: vbmendes
+'''
+
 from django import template
 from django.test import TestCase
 
