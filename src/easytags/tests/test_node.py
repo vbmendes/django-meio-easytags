@@ -14,7 +14,7 @@ from easytags.node import EasyNode
 
 class MyEasyNode(EasyNode):
 
-    def render_context(self, arg1, kwarg1=None):
+    def render_context(self, context, arg1, kwarg1=None):
         return arg1
 
 class NodeTests(TestCase):

@@ -16,7 +16,7 @@ the template tag:
 	
 	class SumNode(EasyNode):
 	
-	    def render_context(self, arg1, arg2, arg3=0):
+	    def render_context(self, context, arg1, arg2, arg3=0):
 	        return int(arg1) + int(arg2) + int(arg3)
 	
 	register.tag('sum', SumNode.parse)

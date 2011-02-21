@@ -27,7 +27,7 @@ class EasyNode(Node):
         args = args_kwargs['args']
         kwargs = args_kwargs['kwargs']
         
-        valid_args_names = render_context_spec.args[1:]
+        valid_args_names = render_context_spec.args[2:]
         
         n_args_kwargs = len(args) + len(kwargs)
         
@@ -57,7 +57,7 @@ class EasyNode(Node):
     def render(self, context):
         args = [arg.resolve(context) for arg in self.args]
         kwargs = dict((key, value.resolve(context)) for key, value in self.kwargs.items())
-        return self.render_context(*args, **kwargs)
+        return self.render_context(context, *args, **kwargs)
     
-    def render_context(self, *args, **kwargs):
+    def render_context(self, context, *args, **kwargs):
         raise NotImplementedError
