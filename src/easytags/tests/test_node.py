@@ -17,6 +17,12 @@ class MyEasyNode(EasyNode):
     def render_context(self, context, arg1, kwarg1=None):
         return arg1
 
+class MyEasyNodeWithoutDefaults(EasyNode):
+
+    def render_context(self, context, arg1):
+        return arg1
+    
+
 class NodeTests(TestCase):
     
     def test_resolves_absolute_string(self):
@@ -123,3 +129,11 @@ class NodeTests(TestCase):
         token = template.Token(template.TOKEN_BLOCK, 'tag_name kwarg1="a"')
 
         self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
+
+    def test_node_can_have_no_args_with_default_value(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name "a"')
+        
+        node = MyEasyNodeWithoutDefaults.parse(parser, token)
+        
+        self.assertEquals(u'"a"' ,node.args[0].var)

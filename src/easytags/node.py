@@ -35,7 +35,7 @@ class EasyNode(Node):
         if n_args_kwargs > max_n_args_kwargs:
             raise TemplateSyntaxError(u'Invalid number of args %s (max. %s)' % (n_args_kwargs, max_n_args_kwargs))
         
-        min_n_args_kwargs = max_n_args_kwargs - len(render_context_spec.defaults)
+        min_n_args_kwargs = max_n_args_kwargs - len(render_context_spec.defaults or ())
         if n_args_kwargs < min_n_args_kwargs:
             raise TemplateSyntaxError(u'Invalid number of args %s (min. %s)' % (n_args_kwargs, max_n_args_kwargs))
         
