@@ -7,22 +7,24 @@ Created on 20/02/2011
 '''
 
 from django import template
-from django.template import Context, Variable
+from django.template import Context, Variable, TemplateSyntaxError
 from django.test import TestCase
 
 from easytags.node import EasyNode
+
 
 class MyEasyNode(EasyNode):
 
     def render_context(self, context, arg1, kwarg1=None):
         return arg1
 
+
 class MyEasyNodeWithoutDefaults(EasyNode):
 
     def render_context(self, context, arg1):
         return arg1
-    
 
+    
 class NodeTests(TestCase):
     
     def test_resolves_absolute_string(self):
@@ -104,31 +106,31 @@ class NodeTests(TestCase):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1 invalid_kwarg="a=1"')
 
-        self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
+        self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
     
     def test_node_parse_verifies_kwarg_already_satisfied_by_arg(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1 arg1="a=1"')
 
-        self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
+        self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
     
     def test_node_parse_verifies_if_there_are_more_args_kwargs_then_method_requires(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1 arg2 arg3')
 
-        self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
+        self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
 
     def test_node_parse_verifies_if_there_are_less_args_kwargs_then_method_requires(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name')
 
-        self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
+        self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
 
     def test_node_parse_verifies_if_required_arg_is_specified(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name kwarg1="a"')
 
-        self.assertRaises(template.TemplateSyntaxError, MyEasyNode.parse, parser, token)
+        self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
 
     def test_node_can_have_no_args_with_default_value(self):
         parser = template.Parser([])
@@ -137,3 +139,37 @@ class NodeTests(TestCase):
         node = MyEasyNodeWithoutDefaults.parse(parser, token)
         
         self.assertEquals(u'"a"' ,node.args[0].var)
+    
+    def test_node_can_receive_infinite_args(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name "a" "b" "c" "d"')
+        
+        MyEasyNode = type('MyEasyNodeWithArgs', (EasyNode,), {
+            'render_context': lambda self, context, *args: reduce(lambda x, y: x + y, args)
+        })
+        
+        node = MyEasyNode.parse(parser, token)
+        
+        self.assertEquals(u'abcd' ,node.render(Context({})))
+    
+    def test_node_can_receive_required_arg_and_infinite_args(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name "a" "b" "c" "d"')
+        
+        MyEasyNode = type('MyEasyNodeWithArgs', (EasyNode,), {
+            'render_context': lambda self, context, arg1, *args: arg1 + reduce(lambda x, y: x + y, args)
+        })
+        
+        node = MyEasyNode.parse(parser, token) 
+        
+        self.assertEquals(u'abcd' ,node.render(Context({})))
+    
+    def test_node_verifies_if_required_arg_is_specified_when_node_can_receive_infinite_args(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name')
+        
+        MyEasyNode = type('MyEasyNodeWithArgs', (EasyNode,), {
+            'render_context': lambda self, context, arg1, *args: True
+        })
+        
+        self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)

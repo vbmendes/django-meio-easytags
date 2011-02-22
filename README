@@ -37,5 +37,5 @@ In this example, ``arg3`` is optional and defaults to 0. So you may use or not t
 TODO
 ====
 
-* Allow render_context to has *args, **kwargs as parameters.
+* Allow render_context to have **kwargs as parameters.
 
