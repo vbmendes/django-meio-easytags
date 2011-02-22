@@ -7,7 +7,7 @@ Usage
 =====
 
 Just subclass the EasyNode and create the method render_context and register
-the template tag:
+the template tag::
 
 	from django.template import Library
 	from easytags.node import EasyNode
@@ -23,7 +23,7 @@ the template tag:
 
 EasyNode will take care of the template tag's parsing, resolving variable
 and inspecting if the args are ok with the ``render_context`` signature.
-In the example above, you can use the sum tag in any of the forms below:
+In the example above, you can use the sum tag in any of the forms below::
 
 	{% sum "1" "2" %}
 	{% sum "1" arg2="2" %}
