@@ -7,7 +7,7 @@ def read(fname):
 
 setup(
     name = "django-meio-easytags",
-    version = "0.1",
+    version = "0.2",
     url = "http://github.com/vbmendes/django-meio-easytags",
     license = "BSD",
     description = "An easy way to create custom template tags for Django's templating system.",
