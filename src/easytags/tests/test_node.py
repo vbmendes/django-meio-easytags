@@ -174,7 +174,7 @@ class NodeTests(TestCase):
         
         self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
 
-    def test_node_car_receive_kwargs(self):
+    def test_node_can_receive_kwargs(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1="bla" arg2="ble"')
         
@@ -193,7 +193,7 @@ class NodeTests(TestCase):
         token = template.Token(template.TOKEN_BLOCK, 'tag_name')
         
         MyEasyNode = type('MyEasyNode', (EasyNode,), {
-            'render_context': lambda self, context, arg1, *kwargs: True
+            'render_context': lambda self, context, arg1, **kwargs: True
         })
         
         self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
@@ -203,8 +203,44 @@ class NodeTests(TestCase):
         token = template.Token(template.TOKEN_BLOCK, 'tag_name arg2="2"')
         
         MyEasyNode = type('MyEasyNode', (EasyNode,), {
-            'render_context': lambda self, context, arg1, *kwargs: True
+            'render_context': lambda self, context, arg1, **kwargs: True
         })
         
         self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
-
+    
+    def test_if_node_can_receive_args_and_kwargs(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name "1" arg2="2"')
+        
+        MyEasyNode = type('MyEasyNode', (EasyNode,), {
+            'render_context': lambda self, context, *args, **kwargs: 
+                args[0]+kwargs.items()[0][0]+u'='+kwargs.items()[0][1]
+        })
+        
+        node = MyEasyNode.parse(parser, token)
+        
+        self.assertEquals(u'1arg2=2', node.render(Context({})))
+    
+    def test_if_node_can_receive_required_arg_and_kwargs(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name "required" "2" arg3="3"')
+        
+        MyEasyNode = type('MyEasyNode', (EasyNode,), {
+            'render_context': lambda self, context, arg1, *args, **kwargs: 
+                arg1+args[0]+kwargs.items()[0][0]+u'='+kwargs.items()[0][1]
+        })
+        
+        node = MyEasyNode.parse(parser, token)
+        
+        self.assertEquals(u'required2arg3=3', node.render(Context({})))
+    
+    def test_node_verifies_if_required_arg_is_specified_two_times(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name "required" arg1="3"')
+        
+        MyEasyNode = type('MyEasyNode', (EasyNode,), {
+            'render_context': lambda self, context, arg1, *args, **kwargs: True
+        })
+        
+        self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
+    

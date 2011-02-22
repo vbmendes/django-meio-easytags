@@ -44,12 +44,17 @@ class EasyNode(Node):
             if not required_arg_name in kwargs:
                 raise TemplateSyntaxError(u'Required arg missing: %s' % required_arg_name)
         
+        first_kwarg_index = len(args)
         if not render_context_spec.keywords:
-            first_kwarg_index = len(args)
             valid_kwargs = valid_args_names[first_kwarg_index:]
             for kwarg in kwargs:
                 if not kwarg in valid_kwargs:
-                    raise TemplateSyntaxError(u'Invalid kwarg %s.' % kwarg)        
+                    raise TemplateSyntaxError(u'Invalid kwarg %s.' % kwarg)
+        else:
+            defined_args = valid_args_names[:first_kwarg_index]
+            for kwarg in kwargs:
+                if kwarg in defined_args:
+                    raise TemplateSyntaxError(u'%s was defined twice.' % kwarg) 
     
     def __init__(self, args_kwargs):
         self.args = [Variable(arg) for arg in args_kwargs['args']]
