@@ -156,7 +156,7 @@ class NodeTests(TestCase):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name "a" "b" "c" "d"')
         
-        MyEasyNode = type('MyEasyNodeWithArgs', (EasyNode,), {
+        MyEasyNode = type('MyEasyNode', (EasyNode,), {
             'render_context': lambda self, context, arg1, *args: arg1 + reduce(lambda x, y: x + y, args)
         })
         
@@ -168,8 +168,43 @@ class NodeTests(TestCase):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name')
         
-        MyEasyNode = type('MyEasyNodeWithArgs', (EasyNode,), {
+        MyEasyNode = type('MyEasyNode', (EasyNode,), {
             'render_context': lambda self, context, arg1, *args: True
         })
         
         self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
+
+    def test_node_car_receive_kwargs(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1="bla" arg2="ble"')
+        
+        MyEasyNode = type('MyEasyNode', (EasyNode,), {
+            'render_context': lambda self, context, **kwargs:\
+                reduce(lambda x,y: u'%s%s' % (x, y),
+                    ['%s=%s' % (key, value) for key, value in kwargs.items()])
+        })
+        
+        node = MyEasyNode.parse(parser, token)
+        
+        self.assertEquals(u'arg1=blaarg2=ble', node.render(Context({})))
+
+    def test_node_verifies_if_required_arg_is_specified_when_code_can_receive_kwargs(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name')
+        
+        MyEasyNode = type('MyEasyNode', (EasyNode,), {
+            'render_context': lambda self, context, arg1, *kwargs: True
+        })
+        
+        self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
+
+    def test_node_verifies_if_required_kwarg_is_specified_when_code_can_receive_kwargs(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name arg2="2"')
+        
+        MyEasyNode = type('MyEasyNode', (EasyNode,), {
+            'render_context': lambda self, context, arg1, *kwargs: True
+        })
+        
+        self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
+
