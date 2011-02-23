@@ -4,6 +4,7 @@
 bin
 develop-eggs
 dist
+docs/build
 downloads
 eggs
 parts
