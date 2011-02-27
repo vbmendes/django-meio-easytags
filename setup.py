@@ -7,8 +7,8 @@ def read(fname):
 
 setup(
     name = "django-meio-easytags",
-    version = "0.2",
-    url = "http://github.com/vbmendes/django-meio-easytags",
+    version = "0.3",
+    url = "http://www.meiocodigo.com/projects/django-meio-easytags/",
     license = "BSD",
     description = "An easy way to create custom template tags for Django's templating system.",
     long_description = read('README'),
