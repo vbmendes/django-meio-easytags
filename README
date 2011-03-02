@@ -6,20 +6,16 @@ An easy way to create custom template tags for Django's templating system.
 Usage
 =====
 
-Just subclass the EasyNode and create the method render_context and register
-the template tag::
+Just instantiate EasyLibrary and register the renderer method as a template tag::
 
-	from django.template import Library
-	from easytags.node import EasyNode
+	from easytags import EasyLibrary
 	
-	register = Library()
+	register = EasyLibrary()
 	
-	class SumNode(EasyNode):
+    def sum(context, arg1, arg2, arg3=0):
+        return int(arg1) + int(arg2) + int(arg3)
 	
-	    def render_context(self, context, arg1, arg2, arg3=0):
-	        return int(arg1) + int(arg2) + int(arg3)
-	
-	register.tag('sum', SumNode.parse)
+	register.easytag(sum)
 
 EasyNode will take care of the template tag's parsing, resolving variable
 and inspecting if the args are ok with the ``render_context`` signature.
