@@ -17,9 +17,10 @@ Just instantiate EasyLibrary and register the renderer method as a template tag:
 	
 	register.easytag(sum)
 
-EasyNode will take care of the template tag's parsing, resolving variable
-and inspecting if the args are ok with the ``render_context`` signature.
-In the example above, you can use the sum tag in any of the forms below::
+The EasyLibrary will take care of subclassing EasyNode that will take care of 
+the template tag's parsing, resolving variable and inspecting if the args are 
+ok with the renderer signature. In the example above, you can use
+the sum tag in any of the forms below::
 
 	{% sum "1" "2" %}
 	{% sum "1" arg2="2" %}
