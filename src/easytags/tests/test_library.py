@@ -57,3 +57,30 @@ class LibraryTests(unittest.TestCase):
         register.easytag('tag_name', test_tag)
 
         self.assertTrue(register.tags.has_key('tag_name'))
+    
+    def test_easy_library_register_tags_as_decorating_method(self):
+        def test_tag(context):
+            return u''
+
+        register = EasyLibrary()
+        register.easytag()(test_tag)
+
+        self.assertTrue(register.tags.has_key('test_tag'))
+    
+    def test_easy_library_register_tags_as_decorating_method_with_name(self):
+        def test_tag(context):
+            return u''
+
+        register = EasyLibrary()
+        register.easytag('tag_name')(test_tag)
+
+        self.assertTrue(register.tags.has_key('tag_name'))
+    
+    def test_easy_library_register_tags_as_decorating_method_with_name_kwarg(self):
+        def test_tag(context):
+            return u''
+
+        register = EasyLibrary()
+        register.easytag(name='tag_name')(test_tag)
+
+        self.assertTrue(register.tags.has_key('tag_name'))

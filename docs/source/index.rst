@@ -67,6 +67,21 @@ You may set a custom name for your template tag just like you do with ordinary `
 
     register.easytag('my_fancy_name', basic)
 
+register.easytag as decorator
+.............................
+
+You can register easy tags with decorators::
+
+    @register.easytag
+    def decorated(context):
+        return u'decorated'
+
+And define the tag name inside the decorator::
+
+    @register.easytag(name='fancy_decorated')
+    def decorated(context):
+        return u'fancy decorated'
+
 Accepts parameters
 ------------------------------------------------
 
