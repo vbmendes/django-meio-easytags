@@ -47,3 +47,4 @@ class EasyLibrary(Library):
             'get_argspec': get_argspec,
         })
         self.tag(name, tag_node.parse)
+        return renderer

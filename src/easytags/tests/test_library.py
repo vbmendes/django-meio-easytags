@@ -84,3 +84,13 @@ class LibraryTests(unittest.TestCase):
         register.easytag(name='tag_name')(test_tag)
 
         self.assertTrue(register.tags.has_key('tag_name'))
+    
+    def test_easy_library_register_tags_keeps_decorated_function_data(self):
+        def test_tag(context):
+            return u''
+
+        register = EasyLibrary()
+        test_tag = register.easytag(name='tag_name')(test_tag)
+
+        self.assertEquals('test_tag', test_tag.__name__)
+
