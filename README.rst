@@ -8,14 +8,14 @@ Usage
 
 Just instantiate EasyLibrary and register the renderer method as a template tag::
 
-	from easytags import EasyLibrary
+    from easytags import EasyLibrary
 	
-	register = EasyLibrary()
+    register = EasyLibrary()
 	
     def sum(context, arg1, arg2, arg3=0):
         return int(arg1) + int(arg2) + int(arg3)
 	
-	register.easytag(sum)
+    register.easytag(sum)
 
 The EasyLibrary will take care of subclassing EasyNode that will take care of 
 the template tag's parsing, resolving variable and inspecting if the args are 
