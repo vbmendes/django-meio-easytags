@@ -21,13 +21,20 @@ class EasyNode(Node):
         return cls(args_kwargs)
     
     @classmethod
+    def get_argspec(cls, func = None):
+        func = func or cls.render_context
+        return getargspec(func)
+    
+    @classmethod
     def is_args_kwargs_valid(cls, args_kwargs):
-        render_context_spec = getargspec(cls.render_context)
+        render_context_spec = cls.get_argspec()
         
         args = args_kwargs['args']
         kwargs = args_kwargs['kwargs']
         
-        valid_args_names = render_context_spec.args[2:]
+        valid_args_names = render_context_spec.args
+        if 'self' in valid_args_names: valid_args_names.remove('self')
+        if 'context' in valid_args_names: valid_args_names.remove('context')
         
         n_args_kwargs = len(args) + len(kwargs)
         

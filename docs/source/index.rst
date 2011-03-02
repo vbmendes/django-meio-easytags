@@ -41,25 +41,48 @@ Ok. It's easy to do with built-in django's ``Node``. In fact this case uses
 almost nothing of the django-meio-easytags power. Let's take a look at a
 more complex example.
 
+EasyLibrary usage
+-----------------
+
+The ``easytags.EasyLibrary`` is a subclass of Django's default ``django.template.Library``.
+It adds a method to create easy tags just defining a function very similar to the
+``render_context`` above. Just do this::
+
+    from easytags import EasyLibrary
+
+    register = EasyLibrary()
+
+    def basic(context):
+        return u'basic template tag'
+
+    register.easytag(basic)
+
+That's it. We just created our template tag. Pay atention that our register is an instance
+of ``easytags.EasyLibrary``, not of ``django.template.Library``.
+
+Custom template tag name
+........................
+
+You may set a custom name for your template tag just like you do with ordinary ``register.tag``::
+
+    register.easytag('my_fancy_name', basic)
+
 Accepts parameters
 ------------------------------------------------
 
 You can also create a template tag that receives one or more parameters and
 set default values to it like you do in Python methods::
 
-    from django.template import Library
-    from easytags.node import EasyNode
+    from easytags import EasyLibrary
 
-    register = Library()
+    register = EasyLibrary()
 
-    class SumNode(EasyNode):
+    def sum(context, arg1, arg2, arg3=0):
+        return int(arg1) + int(arg2) + int(arg3)
 
-        def render_context(self, context, arg1, arg2, arg3=0):
-            return int(arg1) + int(arg2) + int(arg3)
+    register.easytag(sum)
 
-    register.tag('sum', SumNode.parse)
-
-I this case, your template tag have two mandatory parameters (``arg1`` and 
+In this case, your template tag have two mandatory parameters (``arg1`` and 
 ``arg2``) and one optional parameter (``arg3``) that defaults to ``0``. You 
 can use this template tag in any of these ways::
 
@@ -93,17 +116,14 @@ Accepts *args
 There's a very nice feature in python that makes it possible to create methods
 that accepts infinite parameters. In django-meio-easytags it's possible too::
 
-	from django.template import Library
-	from easytags.node import EasyNode
+	from easytags import EasyLibrary
 	
-	register = Library()
+	register = EasyLibrary()
 	
-	class JoinLinesNode(EasyNode):
+    def join_lines(context, *args):
+        return u'<br />'.join(args)
 	
-	    def render_context(self, context, *args):
-	        return u'<br />'.join(args)
-	
-	register.tag('join_lines', BasicNode.parse)
+	register.easytag(join_lines)
 
 With this tag you can join as many lines as you want::
 
@@ -114,20 +134,17 @@ With this tag you can join as many lines as you want::
 Accepts **kwargs
 ----------------
 
-In python you may create methods that received any named parameter and
+In python you may create methods that receives any named parameter and
 django-meio-easytags supports it too::
 
-	from django.template import Library
-	from easytags.node import EasyNode
+	from easytags import EasyLibrary
 	
-	register = Library()
+	register = EasyLibrary()
 	
-	class QueryStringNode(EasyNode):
+    def querystring(context, **kwargs):
+        return u'&'.join(u'%s=%s' % (k,v) for k, v in kwargs.items())
 	
-	    def render_context(self, **kwargs):
-	        return u'&'.join(u'%s=%s' % (k,v) for k, v in kwargs.items())
-	
-	register.tag('querystring', BasicNode.parse)
+	register.tag(querystring)
 
 With this tag you can build a querystring defining each key and value::
 
