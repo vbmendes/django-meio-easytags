@@ -11,7 +11,7 @@ import unittest
 from django import template
 
 from easytags import EasyLibrary
-from easytags import EasyNode
+from easytags import EasyNode, EasyAsNode
 
 class LibraryTests(unittest.TestCase):
 
@@ -93,4 +93,25 @@ class LibraryTests(unittest.TestCase):
         test_tag = register.easytag(name='tag_name')(test_tag)
 
         self.assertEquals('test_tag', test_tag.__name__)
+    
+        
+    def test_easy_library_register_as_tags(self):
+        def test_tag(context):
+            return u'my return'
 
+        register = EasyLibrary()
+        register.easyastag(test_tag)
+        
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, 'test_tag as varname')
+        
+        self.assertTrue(register.tags.has_key('test_tag'))
+        
+        test_node = register.tags['test_tag'](parser, token)
+        
+        self.assertTrue(isinstance(test_node, EasyAsNode))
+        
+        context = template.Context({})
+        
+        self.assertEquals(u'', test_node.render(context))
+        self.assertEquals(u'my return', context['varname'])

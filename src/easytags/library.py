@@ -8,7 +8,7 @@ Created on 01/03/2011
 
 from django.template import Library
 
-from node import EasyNode
+from node import EasyNode, EasyAsNode
 
 class EasyLibrary(Library):
 
@@ -20,19 +20,26 @@ class EasyLibrary(Library):
         return name, renderer
     
     def easytag(self, name = None, renderer = None):
+        return self._handle_decorator(EasyNode, name, renderer)
+        
+    def easyastag(self, name = None, renderer = None):
+        return self._handle_decorator(EasyAsNode, name, renderer)
+        
+    
+    def _handle_decorator(self, node_class, name, renderer):
         if not name and not renderer:
             return self.easytag
         if not renderer:
             if callable(name):
                 renderer = name
-                return self._register_easytag(renderer.__name__, renderer)
+                return self._register_easytag(node_class, renderer.__name__, renderer)
             else:
                 def dec(renderer):
-                    return self._register_easytag(name, renderer)
+                    return self._register_easytag(node_class, name, renderer)
                 return dec
-        return self._register_easytag(name, renderer)
+        return self._register_easytag(node_class, name, renderer)
     
-    def _register_easytag(self, name, renderer):
+    def _register_easytag(self, node_class, name, renderer):
         if not renderer:
             renderer = name
             name = renderer.__name__
@@ -40,9 +47,9 @@ class EasyLibrary(Library):
         def render_context(self, context, *args, **kwargs):
             return renderer(context, *args, **kwargs)
         
-        get_argspec = classmethod(lambda cls: EasyNode.get_argspec(renderer))
+        get_argspec = classmethod(lambda cls: node_class.get_argspec(renderer))
         
-        tag_node = type('%sEasyNode' % name, (EasyNode,), {
+        tag_node = type('%sEasyNode' % name, (node_class,), {
             'render_context': render_context,
             'get_argspec': get_argspec,
         })
