@@ -10,14 +10,36 @@ from inspect import getargspec
 
 from django.template import Node, Variable, TemplateSyntaxError
 
-from parser import get_args_kwargs_from_bits
+
+is_kwarg = lambda bit: not bit[0] in (u'"', u"'") and u'=' in bit
+
+
+def get_args_kwargs_from_bits(bits):
+    args = []
+    kwargs = {}
+    for bit in bits:
+        if is_kwarg(bit):
+            splitted_bit = bit.split(u'=')
+            kwargs[splitted_bit[0]] = u'='.join(splitted_bit[1:])
+        else:
+            if not kwargs:
+                args.append(bit)
+            else:
+                raise TemplateSyntaxError(u"Args must be before kwargs.")
+                
+    return {'args': tuple(args), 'kwargs': kwargs}
+
 
 class EasyNode(Node):
     
     @classmethod
-    def parse(cls, parser, token):
+    def parse_to_args_kwargs(cls, parser, token):
         bits = token.split_contents()
-        args_kwargs = get_args_kwargs_from_bits(bits[1:])
+        return get_args_kwargs_from_bits(bits[1:])
+    
+    @classmethod
+    def parse(cls, parser, token):
+        args_kwargs = cls.parse_to_args_kwargs(parser, token)
         cls.is_args_kwargs_valid(args_kwargs)
         return cls(args_kwargs)
     
@@ -80,7 +102,7 @@ class EasyNode(Node):
 class EasyAsNode(EasyNode):
     
     @classmethod
-    def parse(cls, parser, token):
+    def parse_to_args_kwargs(cls, parser, token):
         bits = token.split_contents()[1:]
         if len(bits) >= 2 and bits[-2] == 'as':
             varname = bits[-1]
@@ -88,12 +110,12 @@ class EasyAsNode(EasyNode):
         else:
             varname = None
         args_kwargs = get_args_kwargs_from_bits(bits)
-        cls.is_args_kwargs_valid(args_kwargs)
-        return cls(args_kwargs, varname)
+        args_kwargs['varname'] = varname
+        return args_kwargs
     
-    def __init__(self, args_kwargs, varname):
+    def __init__(self, args_kwargs):
         super(EasyAsNode, self).__init__(args_kwargs)
-        self.varname = varname
+        self.varname = args_kwargs['varname']
     
     def render(self, context):
         rendered = super(EasyAsNode, self).render(context)
