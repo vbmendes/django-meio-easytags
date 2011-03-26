@@ -12,12 +12,10 @@ from django.template import TemplateSyntaxError
 is_kwarg = lambda bit: not bit[0] in (u'"', u"'") and u'=' in bit
 
 
-def get_args_kwargs_from_token_parse(parser, token):
-    bits = token.split_contents()
+def get_args_kwargs_from_bits(bits):
     args = []
     kwargs = {}
-    
-    for bit in bits[1:]:
+    for bit in bits:
         if is_kwarg(bit):
             splitted_bit = bit.split(u'=')
             kwargs[splitted_bit[0]] = u'='.join(splitted_bit[1:])
@@ -28,3 +26,9 @@ def get_args_kwargs_from_token_parse(parser, token):
                 raise TemplateSyntaxError(u"Args must be before kwargs.")
                 
     return {'args': tuple(args), 'kwargs': kwargs}
+
+
+def get_args_kwargs_from_token_parse(parser, token):
+    bits = token.split_contents()
+    return get_args_kwargs_from_bits(bits[1:])
+    

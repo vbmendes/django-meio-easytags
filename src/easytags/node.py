@@ -10,13 +10,14 @@ from inspect import getargspec
 
 from django.template import Node, Variable, TemplateSyntaxError
 
-from parser import get_args_kwargs_from_token_parse
+from parser import get_args_kwargs_from_bits
 
 class EasyNode(Node):
     
     @classmethod
     def parse(cls, parser, token):
-        args_kwargs = get_args_kwargs_from_token_parse(parser, token)
+        bits = token.split_contents()
+        args_kwargs = get_args_kwargs_from_bits(bits[1:])
         cls.is_args_kwargs_valid(args_kwargs)
         return cls(args_kwargs)
     
@@ -74,3 +75,29 @@ class EasyNode(Node):
     
     def render_context(self, context, *args, **kwargs):
         raise NotImplementedError
+
+
+class EasyAsNode(EasyNode):
+    
+    @classmethod
+    def parse(cls, parser, token):
+        bits = token.split_contents()[1:]
+        if len(bits) >= 2 and bits[-2] == 'as':
+            varname = bits[-1]
+            bits = bits[:-2]
+        else:
+            varname = None
+        args_kwargs = get_args_kwargs_from_bits(bits)
+        cls.is_args_kwargs_valid(args_kwargs)
+        return cls(args_kwargs, varname)
+    
+    def __init__(self, args_kwargs, varname):
+        super(EasyAsNode, self).__init__(args_kwargs)
+        self.varname = varname
+    
+    def render(self, context):
+        rendered = super(EasyAsNode, self).render(context)
+        if self.varname:
+            context[self.varname] = rendered
+            return u''
+        return rendered

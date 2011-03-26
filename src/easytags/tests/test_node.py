@@ -10,7 +10,7 @@ from django import template
 from django.template import Context, Variable, TemplateSyntaxError
 from django.test import TestCase
 
-from easytags.node import EasyNode
+from easytags.node import EasyNode, EasyAsNode
 
 
 class MyEasyNode(EasyNode):
@@ -243,4 +243,31 @@ class NodeTests(TestCase):
         })
         
         self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
+        
+    def test_as_node_receives_as_parameter(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, u'tag_name as varname')
+        
+        MyEasyAsNode = type('MyEasyAsNode', (EasyAsNode,), {
+            'render_context': lambda self, context, **kwargs: 'value'
+        })
+        
+        node = MyEasyAsNode.parse(parser, token)
+        context = Context()
+        
+        self.assertEqual('', node.render(context))
+        self.assertEqual('value', context['varname']) 
     
+    def test_as_node_can_be_used_without_as_parameter(self):
+        parser = template.Parser([])
+        token = template.Token(template.TOKEN_BLOCK, u'tag_name "value"')
+        
+        MyEasyAsNode = type('MyEasyAsNode', (EasyAsNode,), {
+            'render_context': lambda self, context, arg1, **kwargs: arg1
+        })
+        
+        node = MyEasyAsNode.parse(parser, token)
+        context = Context()
+        
+        self.assertEqual('value', node.render(context))
+        
