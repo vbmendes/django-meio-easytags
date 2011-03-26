@@ -131,14 +131,14 @@ Accepts *args
 There's a very nice feature in python that makes it possible to create methods
 that accepts infinite parameters. In django-meio-easytags it's possible too::
 
-	from easytags import EasyLibrary
-	
-	register = EasyLibrary()
-	
+    from easytags import EasyLibrary
+    
+    register = EasyLibrary()
+    
     def join_lines(context, *args):
         return u'<br />'.join(args)
-	
-	register.easytag(join_lines)
+    
+    register.easytag(join_lines)
 
 With this tag you can join as many lines as you want::
 
@@ -152,14 +152,14 @@ Accepts **kwargs
 In python you may create methods that receives any named parameter and
 django-meio-easytags supports it too::
 
-	from easytags import EasyLibrary
-	
-	register = EasyLibrary()
-	
+    from easytags import EasyLibrary
+    
+    register = EasyLibrary()
+    
     def querystring(context, **kwargs):
         return u'&'.join(u'%s=%s' % (k,v) for k, v in kwargs.items())
-	
-	register.easytag(querystring)
+    
+    register.easytag(querystring)
 
 With this tag you can build a querystring defining each key and value::
 
@@ -175,21 +175,21 @@ override the `EasyAsNode` instead of `EasyNode` and use it in your templates lik
 this::
 
     from django.template import Library
-	from easytags.node import EasyAsNode
-	
-	register = Library()
-	
-	class BasicAsNode(EasyAsNode):
-	
-	    def render_context(self, context):
-	        return 'basic content to variable'
-	
-	register.tag('basic', BasicAsNode.parse)
+    from easytags.node import EasyAsNode
+    
+    register = Library()
+    
+    class BasicAsNode(EasyAsNode):
+    
+        def render_context(self, context):
+            return 'basic content to variable'
+    
+    register.tag('basic', BasicAsNode.parse)
 
 Then load your template tags in your template and use it::
 
     {% load my_template_tags %}
-
+    
     {% basic as varname %}
 
 And the Node will store the returning value from `render_context` in a context
@@ -198,11 +198,11 @@ the `as` parameter and register it in EasyLibrary? Yes you can! Just create your
 method and register it as an `easyastag`::
 
     from easytags import EasyLibrary
-	
-	register = EasyLibrary()
-	
+    
+    register = EasyLibrary()
+    
     def basic(context):
         return 'basic content to variable'
-	
-	register.easytag(basic)
+    
+    register.easytag(basic)
 
