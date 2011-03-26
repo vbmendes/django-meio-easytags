@@ -11,7 +11,7 @@ setup(
     url = "http://www.meiocodigo.com/projects/django-meio-easytags/",
     license = "BSD",
     description = "An easy way to create custom template tags for Django's templating system.",
-    long_description = read('README'),
+    long_description = read('README.rst'),
     author = "Vinicius Mendes",
     author_email = "vbmendes@gmail.com",
     packages = find_packages('src'),
