@@ -3,8 +3,11 @@
 *.pyo
 .installed.cfg
 bin
+build
 develop-eggs
 dist
+docs/Makefile
+docs/make.bat
 docs/build
 downloads
 eggs

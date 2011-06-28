@@ -92,7 +92,7 @@ class EasyNode(Node):
     
     def render(self, context):
         args = [arg.resolve(context) for arg in self.args]
-        kwargs = dict((key, value.resolve(context)) for key, value in self.kwargs.items())
+        kwargs = dict((str(key), value.resolve(context)) for key, value in self.kwargs.items())
         return self.render_context(context, *args, **kwargs)
     
     def render_context(self, context, *args, **kwargs):
