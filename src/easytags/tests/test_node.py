@@ -244,6 +244,58 @@ class NodeTests(TestCase):
 
         self.assertRaises(TemplateSyntaxError, MyEasyNode.parse, parser, token)
 
+    def test_node_applies_filters_to_args(self):
+        parser = template.Parser([])
+        context = Context({})
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name "string1 string2"|slugify|upper')
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
+
+        node = MyEasyNode(args_kwargs)
+
+        self.assertEquals(
+            u'STRING1-STRING2',
+            node.render(context),
+        )
+
+    def test_node_applies_filters_to_kwargs(self):
+        parser = template.Parser([])
+        context = Context({})
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1="string1 string2"|slugify|upper')
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
+
+        node = MyEasyNode(args_kwargs)
+
+        self.assertEquals(
+            u'STRING1-STRING2',
+            node.render(context),
+        )
+
+    def test_node_applies_filters_to_variable_in_args(self):
+        parser = template.Parser([])
+        context = Context({'variable': "string1 string2"})
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name variable|slugify|upper')
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
+
+        node = MyEasyNode(args_kwargs)
+
+        self.assertEquals(
+            u'STRING1-STRING2',
+            node.render(context),
+        )
+
+    def test_node_applies_filters_to_variable_in_kwargs(self):
+        parser = template.Parser([])
+        context = Context({'variable': "string1 string2"})
+        token = template.Token(template.TOKEN_BLOCK, 'tag_name arg1=variable|slugify|upper')
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
+
+        node = MyEasyNode(args_kwargs)
+
+        self.assertEquals(
+            u'STRING1-STRING2',
+            node.render(context),
+        )
+
     def test_as_node_receives_as_parameter(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, u'tag_name as varname')
