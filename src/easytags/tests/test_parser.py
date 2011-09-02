@@ -26,7 +26,7 @@ class ParserTests(TestCase):
         """
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name "arg1" "arg2"')
-        args_kwargs = EasyAsNode.parse_to_args_kwargs(parser, token)
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
         args_kwargs_str = {'args': tuple([x.token for x in args_kwargs['args']]),
                            'kwargs': dict((key, value.token) for key, value in args_kwargs['kwargs'].iteritems())}
         self.assertEquals(
@@ -40,7 +40,7 @@ class ParserTests(TestCase):
         """
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name kwarg1="1" kwarg2="2"')
-        args_kwargs = EasyAsNode.parse_to_args_kwargs(parser, token)
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
         args_kwargs_str = {'args': tuple([x.token for x in args_kwargs['args']]),
                            'kwargs': dict((key, value.token) for key, value in args_kwargs['kwargs'].iteritems())}
         self.assertEquals(
@@ -54,7 +54,7 @@ class ParserTests(TestCase):
         """
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name "arg1" kwarg1="1"')
-        args_kwargs = EasyAsNode.parse_to_args_kwargs(parser, token)
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
         args_kwargs_str = {'args': tuple([x.token for x in args_kwargs['args']]),
                            'kwargs': dict((key, value.token) for key, value in args_kwargs['kwargs'].iteritems())}
         self.assertEquals(
@@ -65,7 +65,7 @@ class ParserTests(TestCase):
     def test_parse_tag_with_variable_arg(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name argvariable')
-        args_kwargs = EasyAsNode.parse_to_args_kwargs(parser, token)
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
         args_kwargs_str = {'args': tuple([x.token for x in args_kwargs['args']]),
                            'kwargs': dict((key, value.token) for key, value in args_kwargs['kwargs'].iteritems())}
         self.assertEquals(
@@ -76,7 +76,7 @@ class ParserTests(TestCase):
     def test_parse_tag_with_equals_in_arg_value(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name "a=1"')
-        args_kwargs = EasyAsNode.parse_to_args_kwargs(parser, token)
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
         args_kwargs_str = {'args': tuple([x.token for x in args_kwargs['args']]),
                            'kwargs': dict((key, value.token) for key, value in args_kwargs['kwargs'].iteritems())}
         self.assertEquals(
@@ -87,7 +87,7 @@ class ParserTests(TestCase):
     def test_parse_tag_with_equals_in_kwarg_value(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, 'tag_name kwarg1="a=1"')
-        args_kwargs = EasyAsNode.parse_to_args_kwargs(parser, token)
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
         args_kwargs_str = {'args': tuple([x.token for x in args_kwargs['args']]),
                            'kwargs': dict((key, value.token) for key, value in args_kwargs['kwargs'].iteritems())}
         self.assertEquals(
@@ -98,7 +98,7 @@ class ParserTests(TestCase):
     def test_parse_tag_special_symbol_in_arg_value(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, u'tag_name "será?"')
-        args_kwargs = EasyAsNode.parse_to_args_kwargs(parser, token)
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
         args_kwargs_str = {'args': tuple([x.token for x in args_kwargs['args']]),
                            'kwargs': dict((key, value.token) for key, value in args_kwargs['kwargs'].iteritems())}
         self.assertEquals(
@@ -109,7 +109,7 @@ class ParserTests(TestCase):
     def test_parse_tag_special_symbol_in_kwarg_value(self):
         parser = template.Parser([])
         token = template.Token(template.TOKEN_BLOCK, u'tag_name kwarg1="será?"')
-        args_kwargs = EasyAsNode.parse_to_args_kwargs(parser, token)
+        args_kwargs = EasyNode.parse_to_args_kwargs(parser, token)
         args_kwargs_str = {'args': tuple([x.token for x in args_kwargs['args']]),
                            'kwargs': dict((key, value.token) for key, value in args_kwargs['kwargs'].iteritems())}
         self.assertEquals(
