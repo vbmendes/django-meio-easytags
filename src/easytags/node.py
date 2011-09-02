@@ -29,6 +29,11 @@ def get_args_kwargs_from_bits(parser, bits):
 
     return {'args': tuple(args), 'kwargs': kwargs}
 
+def SmartVariable(var):
+    if hasattr(var, 'resolve'):
+        return var
+    return Variable(var)
+
 
 class EasyNode(Node):
 
@@ -87,8 +92,8 @@ class EasyNode(Node):
                     raise TemplateSyntaxError(u'%s was defined twice.' % kwarg)
 
     def __init__(self, args_kwargs):
-        self.args = args_kwargs['args']
-        self.kwargs = args_kwargs['kwargs']
+        self.args = [SmartVariable(arg) for arg in args_kwargs['args']]
+        self.kwargs = dict((key, SmartVariable(value)) for key, value in args_kwargs['kwargs'].iteritems())
 
     def render(self, context):
         args = [arg.resolve(context) for arg in self.args]
