@@ -204,5 +204,5 @@ method and register it as an `easyastag`::
     def basic(context):
         return 'basic content to variable'
     
-    register.easytag(basic)
+    register.easyastag(basic)
 
