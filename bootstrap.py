@@ -67,9 +67,9 @@ site = __import__('site')
 sys.path[:] = clean_path
 for k, v in sys.modules.items():
     if k in ('setuptools', 'pkg_resources') or (
-        hasattr(v, '__path__') and
-        len(v.__path__) == 1 and
-        not os.path.exists(os.path.join(v.__path__[0], '__init__.py'))):
+            hasattr(v, '__path__') and
+            len(v.__path__) == 1 and
+            not os.path.exists(os.path.join(v.__path__[0], '__init__.py'))):
         # This is a namespace package.  Remove it.
         sys.modules.pop(k)
 
