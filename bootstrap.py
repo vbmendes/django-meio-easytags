@@ -107,17 +107,20 @@ local resources, you can keep this script from going over the network.
 '''
 
 parser = OptionParser(usage=usage)
-parser.add_option("-v", "--version",
+parser.add_option(
+    "-v", "--version",
     dest="version",
     help="use a specific zc.buildout version"
 )
-parser.add_option("-d", "--distribute",
+parser.add_option(
+    "-d", "--distribute",
     action="store_true",
     dest="use_distribute",
     default=False,
     help="Use Distribute rather than Setuptools."
 )
-parser.add_option("--setup-source",
+parser.add_option(
+    "--setup-source",
     action="callback",
     dest="setup_source",
     callback=normalize_to_url,
@@ -130,7 +133,8 @@ parser.add_option("--setup-source",
         "will default to " + distribute_source + "."
     )
 )
-parser.add_option("--download-base",
+parser.add_option(
+    "--download-base",
     action="callback",
     dest="download_base",
     callback=normalize_to_url,
@@ -142,14 +146,16 @@ parser.add_option("--download-base",
         "Defaults to PyPI."
     )
 )
-parser.add_option("--eggs",
+parser.add_option(
+    "--eggs",
     help=(
         "Specify a directory for storing eggs.  Defaults to "
         "a temporary directory that is deleted when the "
         "bootstrap script completes."
     )
 )
-parser.add_option("-t", "--accept-buildout-test-releases",
+parser.add_option(
+    "-t", "--accept-buildout-test-releases",
     dest='accept_buildout_test_releases',
     action="store_true",
     default=False,
@@ -162,7 +168,8 @@ parser.add_option("-t", "--accept-buildout-test-releases",
         "even if they are alphas or betas."
     )
 )
-parser.add_option("-c", None,
+parser.add_option(
+    "-c", None,
     action="store",
     dest="config_file",
     help=(
