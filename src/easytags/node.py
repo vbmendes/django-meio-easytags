@@ -29,6 +29,7 @@ def get_args_kwargs_from_bits(parser, bits):
 
     return {'args': tuple(args), 'kwargs': kwargs}
 
+
 def SmartVariable(var):
     if hasattr(var, 'resolve'):
         return var
@@ -49,7 +50,7 @@ class EasyNode(Node):
         return cls(args_kwargs)
 
     @classmethod
-    def get_argspec(cls, func = None):
+    def get_argspec(cls, func=None):
         func = func or cls.render_context
         return getargspec(func)
 
@@ -61,8 +62,10 @@ class EasyNode(Node):
         kwargs = args_kwargs['kwargs']
 
         valid_args_names = render_context_spec.args
-        if 'self' in valid_args_names: valid_args_names.remove('self')
-        if 'context' in valid_args_names: valid_args_names.remove('context')
+        if 'self' in valid_args_names:
+            valid_args_names.remove('self')
+        if 'context' in valid_args_names:
+            valid_args_names.remove('context')
 
         n_args_kwargs = len(args) + len(kwargs)
 
